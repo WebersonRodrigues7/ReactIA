@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReactIA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="ReactIA">
+        <aside class="panel">
+          <div class="brand">
+            <span class="brand__mark">R</span>
+            <div>
+              <strong>ReactIA</strong>
+              <span>Mentoria React com IA</span>
+            </div>
+          </div>
+
+          <div class="status-card">
+            <span class="status-card__dot"></span>
+            <div>
+              <strong>Ollama conectado ao backend</strong>
+              <span>Modelo: minimax-m2.5:cloud</span>
+            </div>
+          </div>
+
+          <div class="prompt-list" aria-label="Sugestoes">
+            <button type="button" data-prompt="Me explique useState com um exemplo simples.">useState</button>
+            <button type="button" data-prompt="Quando devo usar useEffect em React?">useEffect</button>
+            <button type="button" data-prompt="Como criar rotas com React Router?">React Router</button>
+            <button type="button" data-prompt="Me mostre um componente de formulario controlado.">Formularios</button>
+          </div>
+        </aside>
+
+        <section class="chat">
+          <header class="chat__header">
+            <div>
+              <p>Assistente de estudos</p>
+              <h1>Aprenda React com respostas diretas, exemplos e boas praticas.</h1>
+            </div>
+          </header>
+
+          <div class="chat__messages" data-chat-messages aria-live="polite"></div>
+
+          <form class="composer" data-chat-form>
+            <label class="sr-only" for="message">Pergunte sobre React</label>
+            <textarea
+              id="message"
+              data-chat-input
+              rows="3"
+              placeholder="Pergunte sobre hooks, componentes, estado, props, bibliotecas React..."
+              autocomplete="off"
+            ></textarea>
+            <button type="submit" data-submit-button>Enviar</button>
+          </form>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
