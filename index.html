@@ -15,7 +15,14 @@
       <section class="workspace" aria-label="ReactIA">
         <aside class="panel">
           <div class="brand">
-            <span class="brand__mark">R</span>
+            <span class="brand__mark" aria-hidden="true">
+              <svg viewBox="-11.5 -10.23174 23 20.46348" role="img">
+                <circle cx="0" cy="0" r="2.05"></circle>
+                <ellipse rx="11" ry="4.2"></ellipse>
+                <ellipse rx="11" ry="4.2" transform="rotate(60)"></ellipse>
+                <ellipse rx="11" ry="4.2" transform="rotate(120)"></ellipse>
+              </svg>
+            </span>
             <div>
               <strong>ReactIA</strong>
               <span>Mentoria React com IA</span>
@@ -25,12 +32,21 @@
           <div class="status-card">
             <span class="status-card__dot"></span>
             <div>
-              <strong>Ollama conectado ao backend</strong>
-              <span>Modelo: minimax-m2.5:cloud</span>
+              <strong>Professor React online</strong>
+              <span>Respostas com exemplos, passos e boas praticas</span>
             </div>
           </div>
 
+          <div class="learning-card" aria-label="Foco das respostas">
+            <span>Foco da aula</span>
+            <strong>Entender, praticar e evoluir</strong>
+            <p>Peça explicacoes curtas, exemplos de codigo, revisao de erros ou desafios para treinar.</p>
+          </div>
+
+          <a class="roadmap-link" href="/roadmap">Ver roadmap de estudos</a>
+
           <div class="prompt-list" aria-label="Sugestoes">
+            <span class="prompt-list__title">Comece por aqui</span>
             <button type="button" data-prompt="Me explique useState com um exemplo simples.">useState</button>
             <button type="button" data-prompt="Quando devo usar useEffect em React?">useEffect</button>
             <button type="button" data-prompt="Como criar rotas com React Router?">React Router</button>
@@ -42,7 +58,13 @@
           <header class="chat__header">
             <div>
               <p>Assistente de estudos</p>
-              <h1>Aprenda React com respostas diretas, exemplos e boas praticas.</h1>
+              <h1>Aprenda React com uma IA clara, pratica e pronta para codar junto.</h1>
+              <div class="topic-tags" aria-label="Topicos">
+                <span>Hooks</span>
+                <span>Componentes</span>
+                <span>Props</span>
+                <span>Rotas</span>
+              </div>
             </div>
           </header>
 

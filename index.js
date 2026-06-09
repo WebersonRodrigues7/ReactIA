@@ -3,6 +3,7 @@ const chatInput = document.querySelector('[data-chat-input]');
 const chatMessages = document.querySelector('[data-chat-messages]');
 const submitButton = document.querySelector('[data-submit-button]');
 const quickPrompts = document.querySelectorAll('[data-prompt]');
+const API_URL = '/chat';
 
 const welcomeMessage = `Oi! Eu sou a ReactIA. Me pergunte sobre componentes, hooks, estado, props, bibliotecas React, testes, rotas ou qualquer detalhe do ecossistema React.`;
 
@@ -37,7 +38,7 @@ async function askReactIA(message) {
   setLoading(true);
 
   try {
-    const response = await fetch('/chat', {
+    const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
