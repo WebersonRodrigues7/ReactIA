@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import datetime, timezone
 from urllib.error import URLError
 from urllib.request import Request, urlopen
 import json
@@ -11,8 +12,9 @@ ROOT = Path(__file__).resolve().parent
 PORT = int(os.getenv("PORT", "3001"))
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
 MODEL = "minimax-m2.5:cloud"
-MAX_MEMORY_MESSAGES = 14
-CONVERSATION_MEMORY = {}
+MAX_MEMORY_MESSAGES = 24
+MEMORY_FILE = ROOT / "memory_base.json"
+MEMORY_STATE = {"sessions": {}}
 
 SYSTEM_PROMPT = f"""
 Voce e a ReactIA, uma IA especialista em desenvolvimento React.
@@ -34,9 +36,41 @@ Regras:
 - Se o usuario pedir algo fora de React ou bibliotecas/hooks React,
   explique com gentileza que voce so pode ajudar nesse tema.
 - Nao mencione nem use outro provedor/modelo de IA. O modelo permitido e {MODEL}.
+- Use a memoria persistente recebida no contexto para manter continuidade entre
+  mensagens e reinicios. Se houver conflito, priorize a mensagem mais recente.
 """.strip()
 
 app = Flask(__name__, static_folder=None)
+
+
+def utc_now():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def load_memory_state():
+    global MEMORY_STATE
+
+    if not MEMORY_FILE.exists():
+        return
+
+    try:
+        data = json.loads(MEMORY_FILE.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        app.logger.warning("Nao foi possivel carregar a base de memoria.")
+        return
+
+    if isinstance(data, dict) and isinstance(data.get("sessions"), dict):
+        MEMORY_STATE = data
+
+
+def save_memory_state():
+    try:
+        MEMORY_FILE.write_text(
+            json.dumps(MEMORY_STATE, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    except OSError as error:
+        app.logger.warning("Nao foi possivel salvar a base de memoria: %s", error)
 
 
 def normalize_session_id(value):
@@ -46,19 +80,71 @@ def normalize_session_id(value):
 
 
 def get_memory(session_id):
-    return CONVERSATION_MEMORY.setdefault(session_id, [])
+    session = MEMORY_STATE["sessions"].setdefault(
+        session_id,
+        {
+            "createdAt": utc_now(),
+            "updatedAt": utc_now(),
+            "messages": [],
+            "notes": [
+                "O aluno esta usando a ReactIA como mentora de React em pt-BR.",
+                "Prefere explicacoes praticas, diretas e com exemplos curtos.",
+            ],
+        },
+    )
+    return session
 
 
 def remember(session_id, role, content):
-    memory = get_memory(session_id)
-    memory.append({"role": role, "content": content})
-    del memory[:-MAX_MEMORY_MESSAGES]
+    session = get_memory(session_id)
+    session["messages"].append(
+        {
+            "role": role,
+            "content": content,
+            "createdAt": utc_now(),
+        }
+    )
+    del session["messages"][:-MAX_MEMORY_MESSAGES]
+    session["updatedAt"] = utc_now()
+    save_memory_state()
+
+
+def build_memory_context(session_id):
+    session = get_memory(session_id)
+    notes = session.get("notes", [])
+
+    if not notes and not session.get("messages"):
+        return ""
+
+    lines = ["Memoria persistente da ReactIA:"]
+
+    if notes:
+        lines.append("Notas fixas:")
+        lines.extend(f"- {note}" for note in notes[:8])
+
+    if session.get("messages"):
+        lines.append(
+            f"Historico recente salvo: {len(session['messages'])} mensagens anteriores nesta sessao."
+        )
+
+    return "\n".join(lines)
+
+
+load_memory_state()
 
 
 def ask_ollama(session_id, user_message):
-    memory = get_memory(session_id)
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    messages.extend(memory)
+    memory_context = build_memory_context(session_id)
+    if memory_context:
+        messages.append({"role": "system", "content": memory_context})
+    messages.extend(
+        {
+            "role": message["role"],
+            "content": message["content"],
+        }
+        for message in get_memory(session_id).get("messages", [])
+    )
     messages.append({"role": "user", "content": user_message})
 
     payload = {
@@ -108,7 +194,12 @@ def chat():
 
     try:
         answer = ask_ollama(session_id, user_message)
-        return jsonify({"answer": answer, "memorySize": len(get_memory(session_id))})
+        return jsonify(
+            {
+                "answer": answer,
+                "memorySize": len(get_memory(session_id).get("messages", [])),
+            }
+        )
     except (TimeoutError, URLError, json.JSONDecodeError) as error:
         app.logger.exception("Erro ao falar com o Ollama: %s", error)
         return (
@@ -125,8 +216,22 @@ def chat():
 def clear_memory():
     body = request.get_json(silent=True) or {}
     session_id = normalize_session_id(body.get("sessionId"))
-    CONVERSATION_MEMORY.pop(session_id, None)
+    MEMORY_STATE["sessions"].pop(session_id, None)
+    save_memory_state()
     return jsonify({"ok": True})
+
+
+@app.get("/memory")
+def memory_status():
+    session_id = normalize_session_id(request.args.get("sessionId"))
+    session = get_memory(session_id)
+    return jsonify(
+        {
+            "messages": len(session.get("messages", [])),
+            "notes": session.get("notes", []),
+            "updatedAt": session.get("updatedAt"),
+        }
+    )
 
 
 @app.get("/")

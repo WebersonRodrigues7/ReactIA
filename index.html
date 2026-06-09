@@ -7,10 +7,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
     <link rel="stylesheet" href="styles.css" />
     <script src="index.js" defer></script>
   </head>
   <body>
+    <div class="ambient" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <main class="app-shell">
       <section class="workspace" aria-label="ReactIA">
         <aside class="panel">
@@ -25,40 +31,38 @@
             </span>
             <div>
               <strong>ReactIA</strong>
-              <span>Mentoria React com IA</span>
+              <span>Mentoria React com memoria</span>
             </div>
           </div>
 
-          <div class="status-card">
+          <div class="status-card" aria-label="Status da IA">
             <span class="status-card__dot"></span>
             <div>
               <strong>Professor React online</strong>
-              <span>Respostas com exemplos, passos e boas praticas</span>
+              <span>Contexto salvo entre conversas</span>
             </div>
           </div>
 
-          <div class="learning-card" aria-label="Foco das respostas">
-            <span>Foco da aula</span>
-            <strong>Entender, praticar e evoluir</strong>
-            <p>Peça explicacoes curtas, exemplos de codigo, revisao de erros ou desafios para treinar.</p>
+          <div class="memory-card" aria-label="Base de memoria">
+            <div class="memory-card__header">
+              <i data-lucide="database"></i>
+              <span>Base de memoria</span>
+            </div>
+            <strong data-memory-count>0 mensagens salvas</strong>
+            <p>A ReactIA usa o historico persistente para lembrar do seu ritmo, duvidas e combinados.</p>
           </div>
 
-          <a class="roadmap-link" href="/roadmap">Ver roadmap de estudos</a>
-
-          <div class="prompt-list" aria-label="Sugestoes">
-            <span class="prompt-list__title">Comece por aqui</span>
-            <button type="button" data-prompt="Me explique useState com um exemplo simples.">useState</button>
-            <button type="button" data-prompt="Quando devo usar useEffect em React?">useEffect</button>
-            <button type="button" data-prompt="Como criar rotas com React Router?">React Router</button>
-            <button type="button" data-prompt="Me mostre um componente de formulario controlado.">Formularios</button>
-          </div>
+          <a class="roadmap-link" href="/roadmap">
+            <i data-lucide="map"></i>
+            <span>Roadmap de estudos</span>
+          </a>
         </aside>
 
         <section class="chat">
           <header class="chat__header">
             <div>
               <p>Assistente de estudos</p>
-              <h1>Aprenda React com uma IA clara, pratica e pronta para codar junto.</h1>
+              <h1>Converse com a ReactIA sem perder o fio da aula.</h1>
               <div class="topic-tags" aria-label="Topicos">
                 <span>Hooks</span>
                 <span>Componentes</span>
@@ -79,7 +83,10 @@
               placeholder="Pergunte sobre hooks, componentes, estado, props, bibliotecas React..."
               autocomplete="off"
             ></textarea>
-            <button type="submit" data-submit-button>Enviar</button>
+            <button type="submit" data-submit-button>
+              <span>Enviar</span>
+              <i data-lucide="send"></i>
+            </button>
           </form>
         </section>
       </section>

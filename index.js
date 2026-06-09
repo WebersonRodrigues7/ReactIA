@@ -2,10 +2,24 @@ const chatForm = document.querySelector('[data-chat-form]');
 const chatInput = document.querySelector('[data-chat-input]');
 const chatMessages = document.querySelector('[data-chat-messages]');
 const submitButton = document.querySelector('[data-submit-button]');
-const quickPrompts = document.querySelectorAll('[data-prompt]');
+const memoryCount = document.querySelector('[data-memory-count]');
 const API_URL = '/chat';
+const SESSION_KEY = 'reactia-session-id';
 
-const welcomeMessage = `Oi! Eu sou a ReactIA. Me pergunte sobre componentes, hooks, estado, props, bibliotecas React, testes, rotas ou qualquer detalhe do ecossistema React.`;
+const sessionId = getSessionId();
+const welcomeMessage = `Oi! Eu sou a ReactIA. Sua base de memoria esta ligada, entao eu consigo manter melhor o contexto das nossas aulas de React.`;
+
+function getSessionId() {
+  const saved = localStorage.getItem(SESSION_KEY);
+
+  if (saved) {
+    return saved;
+  }
+
+  const next = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+  localStorage.setItem(SESSION_KEY, next);
+  return next;
+}
 
 function createMessage(content, role) {
   const article = document.createElement('article');
@@ -28,7 +42,29 @@ function createMessage(content, role) {
 function setLoading(isLoading) {
   submitButton.disabled = isLoading;
   chatInput.disabled = isLoading;
-  submitButton.textContent = isLoading ? 'Pensando...' : 'Enviar';
+  submitButton.querySelector('span').textContent = isLoading ? 'Pensando...' : 'Enviar';
+}
+
+function updateMemoryCount(count) {
+  if (!memoryCount) {
+    return;
+  }
+
+  const label = count === 1 ? 'mensagem salva' : 'mensagens salvas';
+  memoryCount.textContent = `${count} ${label}`;
+}
+
+async function loadMemoryStatus() {
+  try {
+    const response = await fetch(`/memory?sessionId=${encodeURIComponent(sessionId)}`);
+    const data = await response.json();
+
+    if (response.ok) {
+      updateMemoryCount(data.messages || 0);
+    }
+  } catch {
+    updateMemoryCount(0);
+  }
 }
 
 async function askReactIA(message) {
@@ -43,7 +79,7 @@ async function askReactIA(message) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message, sessionId })
     });
 
     const data = await response.json();
@@ -53,6 +89,7 @@ async function askReactIA(message) {
     }
 
     pendingMessage.querySelector('p').textContent = data.answer;
+    updateMemoryCount(data.memorySize || 0);
   } catch (error) {
     pendingMessage.querySelector('p').textContent = error.message;
     pendingMessage.classList.add('message--error');
@@ -76,11 +113,15 @@ chatForm.addEventListener('submit', (event) => {
   askReactIA(message);
 });
 
-quickPrompts.forEach((button) => {
-  button.addEventListener('click', () => {
-    chatInput.value = button.dataset.prompt;
-    chatInput.focus();
-  });
-});
-
 createMessage(welcomeMessage, 'assistant');
+loadMemoryStatus();
+
+window.addEventListener('load', () => {
+  if (window.lucide) {
+    window.lucide.createIcons({
+      attrs: {
+        'stroke-width': 1.8
+      }
+    });
+  }
+});
