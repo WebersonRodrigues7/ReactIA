@@ -1,3 +1,63 @@
 {
-  "sessions": {}
+  "sessions": {
+    "smoke": {
+      "createdAt": "2026-06-09T23:02:55+00:00",
+      "updatedAt": "2026-06-09T23:02:55+00:00",
+      "messages": [],
+      "notes": [
+        "O aluno esta usando a ReactIA como mentora de React em pt-BR.",
+        "Prefere explicacoes praticas, diretas e com exemplos curtos."
+      ]
+    },
+    "f7b785ac-b3d8-4522-b4d9-02f0f677f0d3": {
+      "createdAt": "2026-06-09T23:03:29+00:00",
+      "updatedAt": "2026-06-09T23:19:17+00:00",
+      "messages": [
+        {
+          "role": "user",
+          "content": "poderia me explicar conceitos básicos de react?",
+          "createdAt": "2026-06-09T23:18:56+00:00"
+        },
+        {
+          "role": "assistant",
+          "content": "# Conceitos Básicos de React\n\nReact é uma biblioteca JavaScript para criar interfaces de usuário interativas. Vou explicar os fundamentos:\n\n---\n\n## 1. Componentes\n\nSão blocos reutilizáveis de UI. Podem ser funções ou classes (hoje usamos funções):\n\n```jsx\nfunction Botao() {\n  return <button>Clique aqui</button>;\n}\n```\n\n---\n\n## 2. JSX\n\nÉ uma sintaxe que parece HTML dentro do JavaScript:\n\n```jsx\nfunction Card() {\n  return (\n    <div className=\"card\">\n      <h1>Título</h1>\n      <p>Conteúdo</p>\n    </div>\n  );\n}\n```\n\n> **Nota:** `className` é usado em vez de `class` (palavra reservada do JS).\n\n---\n\n## 3. Props\n\nSão dados passados de um componente pai para um componente filho:\n\n```jsx\nfunction Saudacao({ nome }) {\n  return <h1>Olá, {nome}!</h1>;\n}\n\n// Uso:\n<Saudacao nome=\"Maria\" />\n```\n\n---\n\n## 4. Estado (useState)\n\nPermite que componentes guardem e atualizem dados:\n\n```jsx\nimport { useState } from 'react';\n\nfunction Contador() {\n  const [contagem, setContagem] = useState(0);\n\n  return (\n    <div>\n      <p>Contagem: {contagem}</p>\n      <button onClick={() => setContagem(contagem + 1)}>\n        Incrementar\n      </button>\n    </div>\n  );\n}\n```\n\n---\n\n## 5. Eventos\n\nTratamos eventos como `onClick`, `onChange`, etc.:\n\n```jsx\nfunction Input() {\n  const [texto, setTexto] = useState('');\n\n  return (\n    <input \n      value={texto}\n      onChange={(e) => setTexto(e.target.value)}\n    />\n  );\n}\n```\n\n---\n\n## Resumo Visual\n\n```\nComponente (função)\n    │\n    ├── Props → dados que entram\n    │\n    ├── Estado (useState) → dados internos que mudam\n    │\n    └── Eventos → ações do usuário\n```\n\n---\n\n## Próximo Passo\n\nQuer aprofundar em algum desses conceitos? O próximo passo do roadmap seria aprender **hooks essenciais** como `useEffect` para lidar com efeitos colaterais e **composição de componentes**.\n\nPosso te dar mais detalhes de algum ponto específico?",
+          "createdAt": "2026-06-09T23:18:56+00:00"
+        },
+        {
+          "role": "user",
+          "content": "qual foi a pergunta que te fiz?",
+          "createdAt": "2026-06-09T23:19:17+00:00"
+        },
+        {
+          "role": "assistant",
+          "content": "Você me perguntou: **\"poderia me explicar conceitos básicos de react?\"**\n\nE eu respondi com uma explicação sobre os fundamentos do React, incluindo:\n\n- Componentes\n- JSX\n- Props\n- Estado (useState)\n- Eventos\n\nPosso ajudar com mais alguma coisa?",
+          "createdAt": "2026-06-09T23:19:17+00:00"
+        }
+      ],
+      "notes": [
+        "O aluno esta usando a ReactIA como mentora de React em pt-BR.",
+        "Prefere explicacoes praticas, diretas e com exemplos curtos."
+      ]
+    },
+    "smoke-run": {
+      "createdAt": "2026-06-09T23:18:05+00:00",
+      "updatedAt": "2026-06-09T23:18:06+00:00",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Responda em uma frase: o que e um componente React?",
+          "createdAt": "2026-06-09T23:18:06+00:00"
+        },
+        {
+          "role": "assistant",
+          "content": "Um componente React é uma função ou classe reutilizável que retorna elementos JSX, representando uma parte da interface que pode receber props (dados) e gerenciar seu próprio estado interno.",
+          "createdAt": "2026-06-09T23:18:06+00:00"
+        }
+      ],
+      "notes": [
+        "O aluno esta usando a ReactIA como mentora de React em pt-BR.",
+        "Prefere explicacoes praticas, diretas e com exemplos curtos."
+      ]
+    }
+  }
 }
