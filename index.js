@@ -225,10 +225,13 @@ function renderConversationList() {
   }
 
   conversations.forEach((conversation) => {
+    const item = document.createElement('article');
+    item.className = 'conversation-item';
+    item.dataset.active = conversation.id === sessionId ? 'true' : 'false';
+
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'conversation-item';
-    button.dataset.active = conversation.id === sessionId ? 'true' : 'false';
+    button.className = 'conversation-open';
     button.addEventListener('click', () => {
       loadConversation(conversation.id);
       closePanel();
@@ -241,9 +244,19 @@ function renderConversationList() {
     const label = conversation.messages === 1 ? 'mensagem' : 'mensagens';
     meta.textContent = `${conversation.messages} ${label}`;
 
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'conversation-delete';
+    deleteButton.setAttribute('aria-label', `Apagar conversa ${conversation.title}`);
+    deleteButton.innerHTML = '<i data-lucide="trash-2"></i>';
+    deleteButton.addEventListener('click', () => deleteConversation(conversation.id));
+
     button.append(title, meta);
-    conversationList.append(button);
+    item.append(button, deleteButton);
+    conversationList.append(item);
   });
+
+  refreshIcons();
 }
 
 function updateConversationTitle(title) {
@@ -298,6 +311,31 @@ async function loadConversation(nextSessionId = sessionId) {
     setLoading(false);
     await loadConversations();
     chatInput.focus();
+  }
+}
+
+async function deleteConversation(targetSessionId) {
+  try {
+    const response = await fetch('/conversation/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sessionId: targetSessionId })
+    });
+
+    if (!response.ok) {
+      throw new Error('Nao foi possivel apagar esta conversa.');
+    }
+
+    if (targetSessionId === sessionId) {
+      startNewConversation();
+      return;
+    }
+
+    await loadConversations();
+  } catch (error) {
+    createMessage(error.message, 'assistant').classList.add('message--error');
   }
 }
 
@@ -409,6 +447,7 @@ function closePanel() {
 
 function applyTheme(theme) {
   const nextTheme = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = nextTheme;
   document.body.dataset.theme = nextTheme;
   localStorage.setItem(THEME_KEY, nextTheme);
 

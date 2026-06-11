@@ -246,6 +246,15 @@ def clear_memory():
     return jsonify({"ok": True})
 
 
+@app.post("/conversation/delete")
+def delete_conversation():
+    body = request.get_json(silent=True) or {}
+    session_id = normalize_session_id(body.get("sessionId"))
+    MEMORY_STATE["sessions"].pop(session_id, None)
+    save_memory_state()
+    return jsonify({"ok": True})
+
+
 @app.get("/conversations")
 def conversations():
     sessions = [

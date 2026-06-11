@@ -21,6 +21,7 @@
   --radius: 14px;
 }
 
+:root[data-theme="dark"],
 body[data-theme="dark"] {
   color-scheme: dark;
   --bg: #131314;
@@ -282,9 +283,10 @@ body[data-panel-open="true"] .drawer-backdrop {
   width: 100%;
   min-height: 54px;
   display: grid;
-  gap: 4px;
-  padding: 10px 12px;
-  text-align: left;
+  grid-template-columns: minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
   transition: background 160ms ease, border-color 160ms ease;
 }
 
@@ -292,7 +294,41 @@ body[data-panel-open="true"] .drawer-backdrop {
   background: color-mix(in srgb, var(--react) 13%, var(--panel));
 }
 
-.conversation-item strong {
+.conversation-open,
+.conversation-delete {
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.conversation-open {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  text-align: left;
+}
+
+.conversation-delete {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.conversation-delete svg {
+  width: 16px;
+  height: 16px;
+}
+
+.conversation-delete:hover {
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--danger);
+}
+
+.conversation-open strong {
   min-width: 0;
   overflow: hidden;
   color: var(--text);
@@ -302,7 +338,7 @@ body[data-panel-open="true"] .drawer-backdrop {
   white-space: nowrap;
 }
 
-.conversation-item span,
+.conversation-open span,
 .conversation-empty {
   color: var(--muted);
   font-size: 0.8rem;
@@ -410,6 +446,7 @@ body[data-chat-started="true"] .chat::after {
 }
 
 body[data-chat-started="false"] .chat__messages {
+  overflow: hidden;
   padding-bottom: 190px;
 }
 
@@ -587,6 +624,13 @@ body[data-chat-started="false"] .composer {
   gap: 12px;
   padding: 20px 20px 186px;
   text-align: center;
+}
+
+body[data-chat-started="false"] .empty-state {
+  position: absolute;
+  inset: 72px 0 152px;
+  min-height: 0;
+  pointer-events: none;
 }
 
 .empty-state__logo {
