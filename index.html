@@ -8,48 +8,41 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
     <link rel="stylesheet" href="styles.css" />
     <script src="index.js" defer></script>
   </head>
-  <body>
-    <div class="ambient" aria-hidden="true">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+  <body data-theme="light" data-chat-started="false">
     <main class="app-shell">
       <section class="workspace" aria-label="ReactIA">
-        <aside class="panel">
+        <div class="drawer-backdrop" data-drawer-backdrop></div>
+
+        <aside class="panel" data-side-panel>
           <div class="brand">
             <span class="brand__mark" aria-hidden="true">
-              <svg viewBox="-11.5 -10.23174 23 20.46348" role="img">
-                <circle cx="0" cy="0" r="2.05"></circle>
-                <ellipse rx="11" ry="4.2"></ellipse>
-                <ellipse rx="11" ry="4.2" transform="rotate(60)"></ellipse>
-                <ellipse rx="11" ry="4.2" transform="rotate(120)"></ellipse>
-              </svg>
+              <span class="iconify" data-icon="logos:react" data-width="28" data-height="28"></span>
             </span>
             <div>
               <strong>ReactIA</strong>
-              <span>Mentoria React com memoria</span>
+              <span>Historico e roadmap</span>
             </div>
+            <button class="icon-button panel-close" type="button" data-close-panel aria-label="Fechar painel">
+              <i data-lucide="x"></i>
+            </button>
           </div>
 
-          <div class="status-card" aria-label="Status da IA">
-            <span class="status-card__dot"></span>
-            <div>
-              <strong>Professor React online</strong>
-              <span>Contexto salvo entre conversas</span>
-            </div>
-          </div>
+          <button class="new-chat-button" type="button" data-new-chat>
+            <i data-lucide="plus"></i>
+            <span>Nova conversa</span>
+          </button>
 
-          <div class="memory-card" aria-label="Base de memoria">
-            <div class="memory-card__header">
-              <i data-lucide="database"></i>
-              <span>Base de memoria</span>
+          <div class="conversation-panel" aria-label="Historico de conversas">
+            <div class="panel-label">
+              <span>Historico</span>
+              <strong data-memory-count>0</strong>
             </div>
-            <strong data-memory-count>0 mensagens salvas</strong>
-            <p>A ReactIA usa o historico persistente para lembrar do seu ritmo, duvidas e combinados.</p>
+            <div class="conversation-list" data-conversation-list></div>
           </div>
 
           <a class="roadmap-link" href="/roadmap">
@@ -60,16 +53,23 @@
 
         <section class="chat">
           <header class="chat__header">
-            <div>
-              <p>Assistente de estudos</p>
-              <h1>Converse com a ReactIA sem perder o fio da aula.</h1>
-              <div class="topic-tags" aria-label="Topicos">
-                <span>Hooks</span>
-                <span>Componentes</span>
-                <span>Props</span>
-                <span>Rotas</span>
+            <button class="icon-button" type="button" data-open-panel aria-label="Mostrar historico e roadmap">
+              <i data-lucide="panel-left-open"></i>
+            </button>
+
+            <div class="top-brand" aria-label="ReactIA">
+              <span class="top-brand__mark" aria-hidden="true">
+                <span class="iconify" data-icon="logos:react" data-width="34" data-height="34"></span>
+              </span>
+              <div>
+                <p>Assistente de estudos</p>
+                <h1 data-chat-title>Nova conversa</h1>
               </div>
             </div>
+
+            <button class="icon-button" type="button" data-theme-toggle aria-label="Alternar modo claro e escuro">
+              <i data-lucide="moon"></i>
+            </button>
           </header>
 
           <div class="chat__messages" data-chat-messages aria-live="polite"></div>

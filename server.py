@@ -22,7 +22,8 @@ Ajude somente com React e seu ecossistema: componentes, hooks, estado,
 props, roteamento, formularios, bibliotecas React, Vite, Next.js, testes,
 estilizacao e boas praticas de frontend React.
 
-Regras:
+Regras: a
+- Use sempre fontes válidas para estudo como documentações e explicações de 2025 para frente
 - Responda em pt-BR.
 - Use exemplos praticos e curtos quando ajudar.
 - Quando o usuario pedir orientacao de estudo, siga este roadmap:
@@ -107,6 +108,30 @@ def remember(session_id, role, content):
     del session["messages"][:-MAX_MEMORY_MESSAGES]
     session["updatedAt"] = utc_now()
     save_memory_state()
+
+
+def session_title(session_id, session):
+    for message in session.get("messages", []):
+        if message.get("role") == "user" and str(message.get("content", "")).strip():
+            title = " ".join(str(message["content"]).split())
+            return title[:54] + ("..." if len(title) > 54 else "")
+
+    return "Nova conversa" if session_id != "default" else "Conversa principal"
+
+
+def serialize_session(session_id, session, include_messages=False):
+    data = {
+        "id": session_id,
+        "title": session_title(session_id, session),
+        "messages": len(session.get("messages", [])),
+        "updatedAt": session.get("updatedAt"),
+        "createdAt": session.get("createdAt"),
+    }
+
+    if include_messages:
+        data["items"] = session.get("messages", [])
+
+    return data
 
 
 def build_memory_context(session_id):
@@ -219,6 +244,23 @@ def clear_memory():
     MEMORY_STATE["sessions"].pop(session_id, None)
     save_memory_state()
     return jsonify({"ok": True})
+
+
+@app.get("/conversations")
+def conversations():
+    sessions = [
+        serialize_session(session_id, session)
+        for session_id, session in MEMORY_STATE.get("sessions", {}).items()
+    ]
+    sessions.sort(key=lambda item: item.get("updatedAt") or "", reverse=True)
+    return jsonify({"conversations": sessions})
+
+
+@app.get("/conversation")
+def conversation():
+    session_id = normalize_session_id(request.args.get("sessionId"))
+    session = get_memory(session_id)
+    return jsonify(serialize_session(session_id, session, include_messages=True))
 
 
 @app.get("/memory")
