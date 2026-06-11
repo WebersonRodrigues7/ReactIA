@@ -6,7 +6,7 @@ import json
 
 from flask import Flask, jsonify, request, send_from_directory
 
-from ollama import MODEL, ask_ollama
+from ollama import MODEL, OLLAMA_URL, OllamaAPIError, OllamaConfigError, ask_ollama
 
 
 ROOT = Path(__file__).resolve().parent
@@ -204,7 +204,10 @@ def chat():
                 "memorySize": len(get_memory(session_id).get("messages", [])),
             }
         )
-    except (TimeoutError, URLError, json.JSONDecodeError) as error:
+    except OllamaConfigError as error:
+        app.logger.exception("Configuracao invalida do Ollama: %s", error)
+        return jsonify({"error": str(error)}), 500
+    except (TimeoutError, URLError, json.JSONDecodeError, OllamaAPIError) as error:
         app.logger.exception("Erro ao falar com o Ollama: %s", error)
         return (
             jsonify(
@@ -290,4 +293,5 @@ def static_files(file_path):
 if __name__ == "__main__":
     print(f"ReactIA rodando em http://localhost:{PORT}")
     print(f"Modelo Ollama: {MODEL}")
+    print(f"Endpoint Ollama: {OLLAMA_URL}")
     app.run(host="127.0.0.1", port=PORT, debug=os.getenv("FLASK_DEBUG") == "1")
