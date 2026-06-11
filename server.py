@@ -2,16 +2,15 @@ import os
 from pathlib import Path
 from datetime import datetime, timezone
 from urllib.error import URLError
-from urllib.request import Request, urlopen
 import json
 
 from flask import Flask, jsonify, request, send_from_directory
 
+from ollama import MODEL, ask_ollama
+
 
 ROOT = Path(__file__).resolve().parent
 PORT = int(os.getenv("PORT", "3001"))
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
-MODEL = "minimax-m2.5:cloud"
 MAX_MEMORY_MESSAGES = 24
 MEMORY_FILE = ROOT / "memory_base.json"
 MEMORY_STATE = {"sessions": {}}
@@ -158,7 +157,7 @@ def build_memory_context(session_id):
 load_memory_state()
 
 
-def ask_ollama(session_id, user_message):
+def ask_reactia(session_id, user_message):
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     memory_context = build_memory_context(session_id)
     if memory_context:
@@ -172,27 +171,7 @@ def ask_ollama(session_id, user_message):
     )
     messages.append({"role": "user", "content": user_message})
 
-    payload = {
-        "model": MODEL,
-        "stream": False,
-        "messages": messages,
-        "options": {
-            "temperature": 0.35,
-        },
-    }
-
-    body = json.dumps(payload).encode("utf-8")
-    ollama_request = Request(
-        OLLAMA_URL,
-        data=body,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-
-    with urlopen(ollama_request, timeout=60) as response:
-        data = json.loads(response.read().decode("utf-8"))
-
-    answer = data.get("message", {}).get("content") or "Nao consegui gerar uma resposta agora."
+    answer = ask_ollama(messages)
     remember(session_id, "user", user_message)
     remember(session_id, "assistant", answer)
     return answer
@@ -218,7 +197,7 @@ def chat():
         return jsonify({"error": "Mensagem muito grande. Envie uma pergunta menor."}), 413
 
     try:
-        answer = ask_ollama(session_id, user_message)
+        answer = ask_reactia(session_id, user_message)
         return jsonify(
             {
                 "answer": answer,
@@ -230,7 +209,7 @@ def chat():
         return (
             jsonify(
                 {
-                    "error": "Nao consegui falar com o Ollama. Confira se o Ollama esta aberto e se o modelo minimax-m2.5:cloud esta disponivel."
+                    "error": "Nao consegui falar com o Ollama. No computador, confira se o Ollama esta aberto. No Vercel, configure OLLAMA_API_KEY e use um modelo cloud disponivel."
                 }
             ),
             500,

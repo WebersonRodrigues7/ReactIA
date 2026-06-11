@@ -1,3 +1,24 @@
 {
-  "sessions": {}
+  "sessions": {
+    "9f22f090-a847-4a29-9434-1a50c7589049": {
+      "createdAt": "2026-06-11T22:40:56+00:00",
+      "updatedAt": "2026-06-11T22:40:56+00:00",
+      "messages": [
+        {
+          "role": "user",
+          "content": "ok",
+          "createdAt": "2026-06-11T22:40:56+00:00"
+        },
+        {
+          "role": "assistant",
+          "content": "Perfeito! Vamos continuar! 🎉\n\n## Próximo passo: Formulários Interativos\n\nVou te mostrar como criar um formulário que responde ao usuário usando **useState**:\n\n```jsx\n// App.jsx\nimport { useState } from 'react';\n\nfunction App() {\n  const [nome, setNome] = useState('');\n  const [email, setEmail] = useState('');\n  const [mensagem, setMensagem] = useState('');\n\n  function handleSubmit(e) {\n    e.preventDefault(); // Evita recarregar a página\n    alert(`Obrigado, ${nome}! \\nEmail: ${email}\\nMensagem: ${mensagem}`);\n  }\n\n  return (\n    <div style={styles.container}>\n      <h1 style={styles.titulo}>Fale Conosco</h1>\n      \n      <form onSubmit={handleSubmit} style={styles.form}>\n        <div style={styles.campo}>\n          <label style={styles.label}>Nome:</label>\n          <input\n            type=\"text\"\n            value={nome}\n            onChange={(e) => setNome(e.target.value)}\n            style={styles.input}\n            placeholder=\"Seu nome\"\n          />\n        </div>\n\n        <div style={styles.campo}>\n          <label style={styles.label}>Email:</label>\n          <input\n            type=\"email\"\n            value={email}\n            onChange={(e) => setEmail(e.target.value)}\n            style={styles.input}\n            placeholder=\"seu@email.com\"\n          />\n        </div>\n\n        <div style={styles.campo}>\n          <label style={styles.label}>Mensagem:</label>\n          <textarea\n            value={mensagem}\n            onChange={(e) => setMensagem(e.target.value)}\n            style={styles.textarea}\n            placeholder=\"Sua mensagem...\"\n          />\n        </div>\n\n        <button type=\"submit\" style={styles.botao}>\n          Enviar\n        </button>\n      </form>\n    </div>\n  );\n}\n\nconst styles = {\n  container: {\n    display: 'flex',\n    flexDirection: 'column',\n    alignItems: 'center',\n    padding: '40px',\n    backgroundColor: '#f5f5f5',\n    minHeight: '100vh',\n    fontFamily: 'Arial, sans-serif',\n  },\n  titulo: {\n    color: '#333',\n    marginBottom: '30px',\n  },\n  form: {\n    backgroundColor: 'white',\n    padding: '30px',\n    borderRadius: '10px',\n    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',\n    width: '100%',\n    maxWidth: '400px',\n  },\n  campo: {\n    marginBottom: '15px',\n  },\n  label: {\n    display: 'block',\n    marginBottom: '5px',\n    color: '#555',\n    fontWeight: 'bold',\n  },\n  input: {\n    width: '100%',\n    padding: '10px',\n    borderRadius: '5px',\n    border: '1px solid #ddd',\n    fontSize: '14px',\n    boxSizing: 'border-box',\n  },\n  textarea: {\n    width: '100%',\n    padding: '10px',\n    borderRadius: '5px',\n    border: '1px solid #ddd',\n    fontSize: '14px',\n    minHeight: '100px',\n    resize: 'vertical',\n    boxSizing: 'border-box',\n  },\n  botao: {\n    width: '100%',\n    padding: '12px',\n    backgroundColor: '#007bff',\n    color: 'white',\n    border: 'none',\n    borderRadius: '5px',\n    fontSize: '16px',\n    cursor: 'pointer',\n    marginTop: '10px',\n  },\n};\n\nexport default App;\n```\n\n## O que aprendemos:\n\n| Conceito | Para que serve |\n|----------|----------------|\n| `useState` | Guarda dados que mudam |\n| `value={valor}` | Input controlado |\n| `onChange` | Detecta quando usuário digita |\n| `e.preventDefault()` | Impede recarregar a página |\n\n---\n\n## Próximo passo do roadmap:\n\n**CSS Modules** ou **Styled Components** - formas mais organizadas de estilizar seus componentes (em vez de objetos grandes como usei acima).\n\nQuer continuar com qual? 😊",
+          "createdAt": "2026-06-11T22:40:56+00:00"
+        }
+      ],
+      "notes": [
+        "O aluno esta usando a ReactIA como mentora de React em pt-BR.",
+        "Prefere explicacoes praticas, diretas e com exemplos curtos."
+      ]
+    }
+  }
 }
