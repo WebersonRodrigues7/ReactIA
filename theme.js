@@ -1,5 +1,5 @@
 (function () {
-  const THEME_KEY = 'reactia-theme';
+  const THEME_KEY = 'tunix-theme';
   const savedTheme = localStorage.getItem(THEME_KEY);
   const theme = savedTheme === 'dark' ? 'dark' : 'light';
 

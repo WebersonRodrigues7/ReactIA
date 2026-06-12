@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ReactIA</title>
+    <title>Tunix IA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
     <script src="https://code.iconify.design/3/3.1.1/iconify.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
     <script src="theme.js"></script>
     <link rel="stylesheet" href="styles.css" />
@@ -16,17 +17,50 @@
   </head>
   <body data-theme="light" data-chat-started="false">
     <main class="app-shell">
-      <section class="workspace" aria-label="ReactIA">
+      <section class="workspace" aria-label="Tunix IA">
+        <section class="auth-screen" data-auth-screen>
+          <div class="auth-card">
+            <span class="auth-card__logo" aria-hidden="true">
+              <img class="tunix-logo" src="tunix-icon.svg" alt="" />
+            </span>
+            <div class="auth-card__copy">
+              <p>Tunix IA</p>
+              <h1>Acesse sua conta Linux</h1>
+              <span>Seu historico e sua memoria ficam separados para cada usuario.</span>
+            </div>
+
+            <form class="auth-form" data-auth-form>
+              <label for="auth-email">Email</label>
+              <input id="auth-email" type="email" data-auth-email autocomplete="email" required />
+
+              <label for="auth-password">Senha</label>
+              <input id="auth-password" type="password" data-auth-password autocomplete="current-password" minlength="6" required />
+
+              <div class="auth-actions">
+                <button type="submit" data-auth-login>Entrar</button>
+                <button type="button" data-auth-signup>Criar conta</button>
+              </div>
+            </form>
+
+            <button class="github-login" type="button" data-auth-github>
+              <i data-lucide="github"></i>
+              <span>Entrar com GitHub</span>
+            </button>
+
+            <p class="auth-feedback" data-auth-feedback></p>
+          </div>
+        </section>
+
         <div class="drawer-backdrop" data-drawer-backdrop></div>
 
         <aside class="panel" data-side-panel>
           <div class="brand">
             <span class="brand__mark" aria-hidden="true">
-              <span class="iconify" data-icon="logos:react" data-width="28" data-height="28"></span>
+              <img class="tunix-logo" src="tunix-icon.svg" alt="" />
             </span>
             <div>
-              <strong>ReactIA</strong>
-              <span>Historico e roadmap</span>
+              <strong>Tunix IA</strong>
+              <span>Historico e trilha Linux</span>
             </div>
             <button class="icon-button panel-close" type="button" data-close-panel aria-label="Fechar painel">
               <i data-lucide="x"></i>
@@ -48,22 +82,22 @@
 
           <a class="roadmap-link" href="/roadmap">
             <i data-lucide="map"></i>
-            <span>Roadmap de estudos</span>
+            <span>Trilha Linux</span>
           </a>
         </aside>
 
         <section class="chat">
           <header class="chat__header">
-            <button class="icon-button" type="button" data-open-panel aria-label="Mostrar historico e roadmap">
+            <button class="icon-button" type="button" data-open-panel aria-label="Mostrar historico e trilha Linux">
               <i data-lucide="panel-left-open"></i>
             </button>
 
-            <div class="top-brand" aria-label="ReactIA">
+            <div class="top-brand" aria-label="Tunix IA">
               <span class="top-brand__mark" aria-hidden="true">
-                <span class="iconify" data-icon="logos:react" data-width="34" data-height="34"></span>
+                <img class="tunix-logo" src="tunix-icon.svg" alt="" />
               </span>
               <div>
-                <p>Assistente de estudos</p>
+                <p>Assistente Linux</p>
                 <h1 data-chat-title>Nova conversa</h1>
               </div>
             </div>
@@ -71,17 +105,21 @@
             <button class="icon-button" type="button" data-theme-toggle aria-label="Alternar modo claro e escuro">
               <i data-lucide="moon"></i>
             </button>
+
+            <button class="icon-button sign-out-button" type="button" data-sign-out aria-label="Sair da conta">
+              <i data-lucide="log-out"></i>
+            </button>
           </header>
 
           <div class="chat__messages" data-chat-messages aria-live="polite"></div>
 
           <form class="composer" data-chat-form>
-            <label class="sr-only" for="message">Pergunte sobre React</label>
+            <label class="sr-only" for="message">Pergunte sobre Linux</label>
             <textarea
               id="message"
               data-chat-input
               rows="3"
-              placeholder="Pergunte sobre hooks, componentes, estado, props, bibliotecas React..."
+              placeholder="Pergunte sobre terminal, distros, pacotes, servidores, permissões..."
               autocomplete="off"
             ></textarea>
             <button type="submit" data-submit-button>

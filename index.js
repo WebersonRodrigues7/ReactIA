@@ -10,23 +10,33 @@ const openPanelButton = document.querySelector('[data-open-panel]');
 const closePanelButton = document.querySelector('[data-close-panel]');
 const drawerBackdrop = document.querySelector('[data-drawer-backdrop]');
 const themeToggle = document.querySelector('[data-theme-toggle]');
+const authScreen = document.querySelector('[data-auth-screen]');
+const authForm = document.querySelector('[data-auth-form]');
+const authEmail = document.querySelector('[data-auth-email]');
+const authPassword = document.querySelector('[data-auth-password]');
+const authSignupButton = document.querySelector('[data-auth-signup]');
+const authGithubButton = document.querySelector('[data-auth-github]');
+const authFeedback = document.querySelector('[data-auth-feedback]');
+const signOutButton = document.querySelector('[data-sign-out]');
 
 const API_URL = '/chat';
-const SESSION_KEY = 'reactia-session-id';
-const THEME_KEY = 'reactia-theme';
+const SESSION_KEY = 'tunix-session-id';
+const THEME_KEY = 'tunix-theme';
 const studyPrompts = [
-  'Com o que posso te ajudar hoje?',
-  'Qual parte do React voce quer entender melhor hoje?',
-  'Vamos transformar sua duvida em pratica?',
-  'Quer revisar hooks, componentes ou estado?',
-  'Me diga onde voce travou e eu te guio passo a passo.',
-  'Pronto para estudar React com exemplos curtos?'
+  'Qual comando Linux voce quer dominar hoje?',
+  'Quer comparar distros ou aprender terminal?',
+  'Vamos resolver sua duvida de Linux na pratica?',
+  'Quer revisar permissoes, pacotes ou servidores?',
+  'Me diga onde voce travou no Linux e eu te guio passo a passo.',
+  'Pronto para estudar Linux com exemplos curtos?'
 ];
 
 let sessionId = getSessionId();
 let conversations = [];
 let emptyPrompt = pickStudyPrompt();
 let hasPlayedIntro = false;
+let supabaseClient = null;
+let authSession = null;
 
 function makeSessionId() {
   return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
@@ -51,6 +61,40 @@ function setSessionId(nextSessionId) {
 
 function clearMessages() {
   chatMessages.replaceChildren();
+}
+
+function setAuthFeedback(message, isError = true) {
+  authFeedback.textContent = message || '';
+  authFeedback.dataset.error = isError ? 'true' : 'false';
+}
+
+function setAuthenticated(isAuthenticated) {
+  document.body.dataset.authenticated = isAuthenticated ? 'true' : 'false';
+  authScreen.hidden = isAuthenticated;
+  chatInput.disabled = !isAuthenticated;
+  submitButton.disabled = !isAuthenticated;
+}
+
+async function authHeaders() {
+  if (!authSession) {
+    throw new Error('Entre na sua conta para continuar.');
+  }
+
+  return {
+    Authorization: `Bearer ${authSession.access_token}`
+  };
+}
+
+async function authFetch(url, options = {}) {
+  const headers = {
+    ...(options.headers || {}),
+    ...(await authHeaders())
+  };
+
+  return fetch(url, {
+    ...options,
+    headers
+  });
 }
 
 function refreshIcons() {
@@ -147,7 +191,7 @@ function createMessage(content, role) {
 
   const label = document.createElement('span');
   label.className = 'message__label';
-  label.textContent = role === 'user' ? 'Voce' : 'ReactIA';
+  label.textContent = role === 'user' ? 'Voce' : 'Tunix';
 
   const text = document.createElement('p');
   text.textContent = content;
@@ -166,17 +210,16 @@ function renderEmptyConversation() {
   const emptyState = document.createElement('section');
   emptyState.className = 'empty-state';
 
-  const logo = document.createElement('span');
-  logo.className = 'empty-state__logo iconify';
-  logo.dataset.icon = 'logos:react';
-  logo.dataset.width = '78';
-  logo.dataset.height = '78';
+  const logo = document.createElement('img');
+  logo.className = 'empty-state__logo tunix-logo';
+  logo.src = 'tunix-icon.svg';
+  logo.alt = '';
 
   const title = document.createElement('h2');
   title.textContent = emptyPrompt;
 
   const subtitle = document.createElement('p');
-  subtitle.textContent = 'Pergunte sobre componentes, hooks, props, rotas ou qualquer etapa do seu estudo em React.';
+  subtitle.textContent = 'Pergunte sobre terminal, distros, instalacao, pacotes, permissoes, shell script ou servidores Linux.';
 
   emptyState.append(logo, title, subtitle);
   chatMessages.append(emptyState);
@@ -265,7 +308,7 @@ function updateConversationTitle(title) {
 
 async function loadConversations() {
   try {
-    const response = await fetch('/conversations');
+    const response = await authFetch('/conversations');
     const data = await response.json();
 
     if (!response.ok) {
@@ -285,7 +328,7 @@ async function loadConversation(nextSessionId = sessionId) {
   setLoading(true);
 
   try {
-    const response = await fetch(`/conversation?sessionId=${encodeURIComponent(sessionId)}`);
+    const response = await authFetch(`/conversation?sessionId=${encodeURIComponent(sessionId)}`);
     const data = await response.json();
 
     if (!response.ok) {
@@ -316,7 +359,7 @@ async function loadConversation(nextSessionId = sessionId) {
 
 async function deleteConversation(targetSessionId) {
   try {
-    const response = await fetch('/conversation/delete', {
+    const response = await authFetch('/conversation/delete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -351,7 +394,7 @@ function startNewConversation() {
   chatInput.focus();
 }
 
-async function askReactIA(message) {
+async function askTunix(message) {
   setLoading(true);
 
   if (chatMessages.querySelector('.empty-state')) {
@@ -363,10 +406,10 @@ async function askReactIA(message) {
   }
 
   createMessage(message, 'user');
-  const pendingMessage = createMessage('Pensando em uma resposta focada em React...', 'assistant');
+  const pendingMessage = createMessage('Pensando em uma resposta focada em Linux...', 'assistant');
 
   try {
-    const response = await fetch(API_URL, {
+    const response = await authFetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -384,7 +427,7 @@ async function askReactIA(message) {
     updateMemoryCount(data.memorySize || 0);
     await loadConversations();
     const active = conversations.find((conversation) => conversation.id === sessionId);
-    updateConversationTitle(active ? active.title : 'Conversa React');
+    updateConversationTitle(active ? active.title : 'Conversa Linux');
   } catch (error) {
     pendingMessage.querySelector('p').textContent = error.message;
     pendingMessage.classList.add('message--error');
@@ -405,7 +448,7 @@ chatForm.addEventListener('submit', (event) => {
   }
 
   chatInput.value = '';
-  askReactIA(message);
+  askTunix(message);
 });
 
 chatInput.addEventListener('keydown', (event) => {
@@ -469,8 +512,128 @@ themeToggle.addEventListener('click', () => {
 
 newChatButton.addEventListener('click', startNewConversation);
 
+authForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  await signInWithEmail();
+});
+
+authSignupButton.addEventListener('click', async () => {
+  await signUpWithEmail();
+});
+
+authGithubButton.addEventListener('click', async () => {
+  await signInWithGithub();
+});
+
+signOutButton.addEventListener('click', async () => {
+  if (supabaseClient) {
+    await supabaseClient.auth.signOut();
+  }
+  authSession = null;
+  conversations = [];
+  renderConversationList();
+  setAuthenticated(false);
+  clearMessages();
+  updateConversationTitle('Nova conversa');
+  updateMemoryCount(0);
+});
+
+async function signInWithEmail() {
+  setAuthFeedback('');
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: authEmail.value.trim(),
+    password: authPassword.value
+  });
+
+  if (error) {
+    setAuthFeedback(error.message);
+    return;
+  }
+
+  await handleSession(data.session);
+}
+
+async function signUpWithEmail() {
+  setAuthFeedback('');
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email: authEmail.value.trim(),
+    password: authPassword.value
+  });
+
+  if (error) {
+    setAuthFeedback(error.message);
+    return;
+  }
+
+  if (!data.session) {
+    setAuthFeedback('Conta criada. Confira seu email para confirmar o acesso.', false);
+    return;
+  }
+
+  await handleSession(data.session);
+}
+
+async function signInWithGithub() {
+  setAuthFeedback('');
+
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'github',
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+
+  if (error) {
+    setAuthFeedback(error.message);
+  }
+}
+
+async function handleSession(nextSession) {
+  authSession = nextSession;
+
+  if (!authSession) {
+    setAuthenticated(false);
+    return;
+  }
+
+  setAuthenticated(true);
+  await loadConversations();
+  await loadConversation(sessionId);
+}
+
+async function initAuth() {
+  setAuthenticated(false);
+  setAuthFeedback('Carregando autenticacao...', false);
+
+  try {
+    const response = await fetch('/auth/config');
+    const config = await response.json();
+
+    if (!response.ok || !config.enabled) {
+      throw new Error(config.error || 'Supabase nao esta configurado.');
+    }
+
+    if (!window.supabase) {
+      throw new Error('Nao foi possivel carregar o Supabase no navegador.');
+    }
+
+    supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+    const { data } = await supabaseClient.auth.getSession();
+    setAuthFeedback('');
+    await handleSession(data.session);
+
+    supabaseClient.auth.onAuthStateChange((_event, nextSession) => {
+      handleSession(nextSession);
+    });
+  } catch (error) {
+    setAuthFeedback(error.message);
+  }
+}
+
 applyTheme(localStorage.getItem(THEME_KEY) || 'light');
-loadConversations().then(() => loadConversation(sessionId));
+initAuth();
 
 window.addEventListener('load', () => {
   refreshIcons();

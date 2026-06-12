@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Tunix">
+  <defs>
+    <linearGradient id="shell" x1="24" x2="72" y1="18" y2="82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#202124"/>
+      <stop offset="1" stop-color="#070809"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="28" x2="68" y1="36" y2="68" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#70d6a7"/>
+      <stop offset="1" stop-color="#0f8b5f"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="#f2b705"/>
+  <path fill="url(#shell)" d="M48 14c16 0 27 14 27 36 0 24-11 34-27 34S21 74 21 50c0-22 11-36 27-36Z"/>
+  <path fill="#fff7dc" d="M48 34c12 0 20 10 20 25 0 16-8 23-20 23s-20-7-20-23c0-15 8-25 20-25Z"/>
+  <circle cx="38" cy="33" r="4" fill="#fff"/>
+  <circle cx="58" cy="33" r="4" fill="#fff"/>
+  <circle cx="39" cy="34" r="2" fill="#111"/>
+  <circle cx="57" cy="34" r="2" fill="#111"/>
+  <path fill="#f2b705" d="M42 43h12l-6 7-6-7Z"/>
+  <rect x="31" y="55" width="34" height="18" rx="5" fill="url(#screen)"/>
+  <path fill="#eafff5" d="m40 60 5 4-5 4v-3l2-1-2-1v-3Zm9 8h9v3h-9v-3Z"/>
+  <path fill="#111" d="M19 74c5-3 11-3 17 0-1 6-15 7-17 0Zm41 0c6-3 12-3 17 0-2 7-16 6-17 0Z" opacity=".95"/>
+</svg>

@@ -10,11 +10,11 @@
   --muted: #6f7378;
   --line: #e1e5eb;
   --line-strong: #c4d7f2;
-  --react: #1a73e8;
+  --linux: #0f8b5f;
   --mint: #0b8f75;
-  --gemini-a: #4285f4;
-  --gemini-b: #a142f4;
-  --gemini-c: #ea4335;
+  --gemini-a: #0f8b5f;
+  --gemini-b: #f2b705;
+  --gemini-c: #202124;
   --danger: #c43c56;
   --shadow: 0 12px 34px rgba(60, 64, 67, 0.14);
   --composer-shadow: 0 8px 26px rgba(60, 64, 67, 0.14);
@@ -34,11 +34,11 @@ body[data-theme="dark"] {
   --muted: #9aa0a6;
   --line: #303134;
   --line-strong: #3f536f;
-  --react: #8ab4f8;
+  --linux: #70d6a7;
   --mint: #81c995;
-  --gemini-a: #8ab4f8;
-  --gemini-b: #c58af9;
-  --gemini-c: #f28b82;
+  --gemini-a: #70d6a7;
+  --gemini-b: #f8d26a;
+  --gemini-c: #e8eaed;
   --danger: #fb7185;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
   --composer-shadow: 0 16px 46px rgba(0, 0, 0, 0.36);
@@ -85,7 +85,7 @@ a {
 button:focus-visible,
 textarea:focus-visible,
 a:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--react) 28%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--linux) 28%, transparent);
   outline-offset: 2px;
 }
 
@@ -109,6 +109,138 @@ a:focus-visible {
   border-radius: 0;
   background: var(--surface);
   box-shadow: none;
+}
+
+.auth-screen {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background:
+    radial-gradient(circle at 50% 12%, color-mix(in srgb, var(--linux) 12%, transparent), transparent 34rem),
+    var(--surface);
+}
+
+body[data-authenticated="true"] .auth-screen {
+  display: none;
+}
+
+.auth-card {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 18px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.auth-card__logo {
+  width: 72px;
+  height: 72px;
+  display: block;
+}
+
+.auth-card__copy {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-card__copy p {
+  margin: 0;
+  color: var(--linux);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.auth-card__copy h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  line-height: 1.08;
+}
+
+.auth-card__copy span,
+.auth-feedback {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+}
+
+.auth-form label {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.auth-form input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 13px;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+
+.auth-form input:focus {
+  border-color: color-mix(in srgb, var(--linux) 50%, var(--line));
+}
+
+.auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.auth-actions button,
+.github-login {
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.auth-actions button:first-child {
+  background: linear-gradient(135deg, var(--gemini-a), var(--gemini-b));
+  color: #ffffff;
+}
+
+.auth-actions button:last-child,
+.github-login {
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
+.github-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.github-login svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-feedback {
+  min-height: 1.4em;
+  margin: 0;
+}
+
+.auth-feedback[data-error="true"] {
+  color: var(--danger);
 }
 
 .panel {
@@ -169,6 +301,13 @@ body[data-panel-open="true"] .drawer-backdrop {
   border-color: transparent;
   border-radius: 14px;
   background: var(--panel);
+}
+
+.tunix-logo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
 }
 
 .brand strong {
@@ -264,7 +403,7 @@ body[data-panel-open="true"] .drawer-backdrop {
 }
 
 .panel-label strong {
-  color: var(--react);
+  color: var(--linux);
   text-transform: none;
 }
 
@@ -291,7 +430,7 @@ body[data-panel-open="true"] .drawer-backdrop {
 }
 
 .conversation-item[data-active="true"] {
-  background: color-mix(in srgb, var(--react) 13%, var(--panel));
+  background: color-mix(in srgb, var(--linux) 13%, var(--panel));
 }
 
 .conversation-open,
@@ -359,14 +498,14 @@ body[data-panel-open="true"] .drawer-backdrop {
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--react) 8%, transparent), transparent 32rem),
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--linux) 8%, transparent), transparent 32rem),
     var(--surface);
 }
 
 .chat__header {
   min-height: 72px;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  grid-template-columns: 48px minmax(0, 1fr) 48px 48px;
   align-items: center;
   gap: 16px;
   padding: 12px 22px;
@@ -396,7 +535,7 @@ body[data-panel-open="true"] .drawer-backdrop {
 
 .top-brand p {
   margin: 0 0 4px;
-  color: var(--react);
+  color: var(--linux);
   font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -494,7 +633,7 @@ body[data-chat-started="false"] .chat__messages {
   align-self: flex-end;
   width: fit-content;
   max-width: min(720px, 86%);
-  background: color-mix(in srgb, var(--react) 11%, var(--panel));
+  background: color-mix(in srgb, var(--linux) 11%, var(--panel));
 }
 
 .message--error {
@@ -504,7 +643,7 @@ body[data-chat-started="false"] .chat__messages {
 .message__label {
   display: block;
   margin-bottom: 7px;
-  color: var(--react);
+  color: var(--linux);
   font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -548,7 +687,7 @@ body[data-chat-started="false"] .composer {
   bottom: auto;
   width: min(760px, calc(100% - 40px));
   margin: 0 auto;
-  border-color: color-mix(in srgb, var(--react) 18%, var(--line));
+  border-color: color-mix(in srgb, var(--linux) 18%, var(--line));
 }
 
 .composer textarea {
@@ -634,8 +773,9 @@ body[data-chat-started="false"] .empty-state {
 }
 
 .empty-state__logo {
-  display: grid;
-  place-items: center;
+  width: 82px;
+  height: 82px;
+  display: block;
   margin-bottom: 6px;
 }
 
@@ -712,7 +852,7 @@ body[data-chat-started="false"] .empty-state {
 
 .roadmap-hero p {
   margin: 0 0 10px;
-  color: var(--react);
+  color: var(--linux);
   font-size: 0.82rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -753,7 +893,7 @@ body[data-chat-started="false"] .empty-state {
 
 .roadmap-step--featured {
   border-color: #8ac4d8;
-  background: color-mix(in srgb, var(--react) 10%, var(--panel));
+  background: color-mix(in srgb, var(--linux) 10%, var(--panel));
 }
 
 .roadmap-step > span {
@@ -763,7 +903,7 @@ body[data-chat-started="false"] .empty-state {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  color: var(--react);
+  color: var(--linux);
   font-weight: 800;
 }
 
